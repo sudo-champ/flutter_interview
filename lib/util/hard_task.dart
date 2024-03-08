@@ -10,7 +10,8 @@ Future<List<String>> checkForbiddenWords(TextEditingController controller) async
 
   List<String> words = text.split(' ');
 
-
+  final receivePort = ReceivePort();
+ /// implement the isolate
 
   final completer = Completer<List<String>>();
   receivePort.listen((message) {
@@ -33,5 +34,17 @@ void checkText(Map<String, dynamic> message) {
 
   final text = message['text'];
   final sendPort = message['sendPort'];
+
+  const forbiddenWords = restrictedNarrationWords;
+
+  final foundWords = <String>[];
+
+  for (final word in forbiddenWords) {
+    if (text.toString().trim().toLowerCase().contains(word.toLowerCase())) {
+      foundWords.add(word);
+    }
+  }
+
+  sendPort.send(foundWords);
 
 }
